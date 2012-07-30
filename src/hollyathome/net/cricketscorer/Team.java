@@ -1,15 +1,25 @@
 package hollyathome.net.cricketscorer;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Team {
+public class Team implements Serializable{
+	
 	private static int nextPlayerNumber;
 	private String name;
-	protected List<Player> players; 
+	private TeamStatus status;
+	protected List<Player> players;
+	
+	public enum TeamStatus {None, Batting, Fielding, AllOut};
 	
 	public Team(String teamName){
 		this.name = teamName;
-		players = new ArrayList<Player>();
+		this.players = new ArrayList<Player>();
+		this.status = TeamStatus.None;
+	}
+	
+	public void setStatus(TeamStatus status){
+		this.status = status;
 	}
 	
 	public static void resetPlayerNumbers(){
@@ -33,23 +43,106 @@ public class Team {
 		return null;
 	}
 	
+	private Player createNewAnonymousPlayer(){
+		nextPlayerNumber += 1;
+		String playerName = "Player" + nextPlayerNumber;
+		Player anonPlayer = new Player(playerName, playerName);
+		players.add(anonPlayer);
+		return anonPlayer;
+	}
+	
 	public Player getFirstPlayer(){
 		if(players.isEmpty()){
-			nextPlayerNumber += 1;
-			String playerName = "Player" + nextPlayerNumber;
-			players.add(new Player(playerName, playerName));
+			createNewAnonymousPlayer();
 		}
+		Player first = players.get(0);
+		first.setInPlay();
 		return players.get(0);
 	}
 	
 	public Player getNextPlayer(String previousPlayerName){
-		int nextPlayerIndex = players.indexOf(getPlayer(previousPlayerName)) + 1;
-		if(players.size() <= nextPlayerIndex){
-			nextPlayerNumber += 1;
-			String playerName = "Player" + nextPlayerNumber;
-			players.add(new Player(playerName, playerName));
+		
+		if(status == TeamStatus.Batting){
+			return getNextBatsman(previousPlayerName);
 		}
-		return players.get(nextPlayerIndex); 
+		
+		if(status == TeamStatus.Fielding){
+			return getNextBowler(previousPlayerName);
+		}
+		
+		return null;
+	}
+	
+	private Player getNextBowler(String previousPlayerName){
+		
+		Player nextPlayer = null;
+		for(Player p: players){
+			if(!p.getPlayersName().equals(previousPlayerName)){
+				nextPlayer = p;
+			}
+		}
+		
+		if(nextPlayer == null){
+			nextPlayer = createNewAnonymousPlayer();
+		}
+		
+		return nextPlayer;
+	}
+	
+	private Player getNextBatsman(String previousPlayerName){
+		
+		Player nextPlayer = null;
+		for(Player p: players){
+			if(!p.getPlayersName().equals(previousPlayerName)
+					&& !p.isInPlay()
+					&& p.getHowOut() == null){
+				nextPlayer = p;
+				break;
+			}
+		}
+		
+		if(nextPlayer == null){
+			nextPlayer = createNewAnonymousPlayer();
+		}
+		
+		nextPlayer.setInPlay();
+		return nextPlayer;
+	}
+	
+	public String[] getPlayerNames(String status){
+		String[] names;
+		int i = 0;
+		if(status.equals("Any")){
+			names = new String[players.size()];
+			for(Player p: players){
+				names[i] = p.getPlayersName();
+				i++;
+			}
+		}else{
+			List<String> subList = new ArrayList<String>();
+			for(Player p: players){
+				if(p.getStatus().equals(status)){
+					subList.add(p.getPlayersName());
+				}
+			}
+			names = new String[subList.size()];
+			for(String s: subList){
+				names[i] = s;
+				i++;
+			}
+		}
+		
+		return names;
+	}
+	
+	public int getPlayerCount(){
+		return players.size();
+	}
+	
+	public void resetPlayers(){
+		for(Player p: players){
+			p.reset();
+		}
 	}
 	
 }

@@ -1,6 +1,8 @@
 package hollyathome.net.cricketscorer;
 
-public abstract class Wicket {
+import java.io.Serializable;
+
+public abstract class Wicket implements Serializable{
 
 	protected Player bowler;
 	protected Player fielder;

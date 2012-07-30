@@ -1,13 +1,16 @@
 package hollyathome.net.cricketscorer;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Player {
+public class Player implements Serializable{
 	private String firstName;
 	private String lastName;
 	private List<Delivery> ballsFaced;
 	private List<Delivery> ballsBowled;
-	private String status = "NotOut";
+	private String status = "Not Out";
+	private Wicket howOut;
+	private boolean inPlay = false;
 	
 	public Player(String playerFirstName, String playerLastName){
 		this.firstName = playerFirstName;
@@ -16,8 +19,24 @@ public class Player {
 		this.ballsBowled = new ArrayList<Delivery>();
 	}
 	
+	public boolean isInPlay(){
+		return this.inPlay;
+	}
+	
+	public void setInPlay(){
+		this.inPlay = true;
+	}
+	
 	public String getPlayersName(){
 		return this.firstName.substring(0,1) + "." + this.lastName;
+	}
+
+	public String getFirstName(){
+		return this.firstName;
+	}
+	
+	public String getLastName(){
+		return this.lastName;
 	}
 	
 	public void setPlayersName(String first, String last){
@@ -26,13 +45,17 @@ public class Player {
 	}
 	
 	public void addBallFaced(Delivery deliveryToAdd){
-		if(deliveryToAdd.isWicket()){
-			Wicket w = deliveryToAdd.getWicket();
-			status = w.getType();
-			w.setBatsman(this);
-			
-		}
 		ballsFaced.add(deliveryToAdd);
+	}
+	
+	public void setHowOut(Wicket wicket){
+		this.status = wicket.getType();
+		this.howOut = wicket;
+		this.inPlay = false;
+	}
+	
+	public Wicket getHowOut(){
+		return this.howOut;
 	}
 	
 	public void addBallBowled(Delivery deliveryToAdd){
@@ -65,5 +88,28 @@ public class Player {
 	
 	public String getStatus(){
 		return status;
+	}
+	
+	public void setStatus(String status){
+		this.status = status;
+	}
+	
+	public void reset(){
+		ballsBowled.clear();
+		ballsFaced.clear();
+		howOut = null;
+		status = "Not Out";
+		inPlay = false;
+	}
+	
+	public int getNumOversBowled(){
+		int validDeliveries = 0;
+		for(Delivery d: ballsBowled){
+			if(d.isComplete()){
+				validDeliveries += 1;
+			}
+		}
+		
+		return validDeliveries / 6;
 	}
 }

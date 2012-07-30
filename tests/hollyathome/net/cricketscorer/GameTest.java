@@ -8,6 +8,9 @@ public class GameTest {
 
 	@Test
 	public void testNewGameWithNoTeamSetup() {
+		
+		Team.resetPlayerNumbers();
+		
 		Team homeTeam = new Team("Essex CC");
 		Team visitors = new Team("Surrey CC");
 		Game g = new Game(homeTeam, visitors, 20);
@@ -20,6 +23,9 @@ public class GameTest {
 	
 	@Test
 	public void testDotBallDelivery(){
+		
+		Team.resetPlayerNumbers();
+		
 		Team homeTeam = new Team("Essex CC");
 		Team visitors = new Team("Surrey CC");
 		Game g = new Game(homeTeam, visitors, 20);
@@ -32,6 +38,9 @@ public class GameTest {
 	
 	@Test
 	public void testWideDelivery(){
+		
+		Team.resetPlayerNumbers();
+		
 		Team homeTeam = new Team("Essex CC");
 		Team visitors = new Team("Surrey CC");
 		Game g = new Game(homeTeam, visitors, 20);
@@ -54,6 +63,9 @@ public class GameTest {
 	
 	@Test
 	public void testSwapBatsmanOddRuns(){
+		
+		Team.resetPlayerNumbers();
+		
 		Team homeTeam = new Team("Essex CC");
 		Team visitors = new Team("Surrey CC");
 		Game g = new Game(homeTeam, visitors, 20);
@@ -68,6 +80,9 @@ public class GameTest {
 	
 	@Test
 	public void testChangeEndsEndOfOver(){
+		
+		Team.resetPlayerNumbers();
+		
 		Team homeTeam = new Team("Essex CC");
 		Team visitors = new Team("Surrey CC");
 		Game g = new Game(homeTeam, visitors, 20);
@@ -86,6 +101,60 @@ public class GameTest {
 		assertEquals(19, g.getOversRemaining());
 		assertEquals(114, g.getTotalBallsRemaining());
 		assertEquals(nextBowler.getPlayersName(), inns.getCurrentBowler().getPlayersName());
+	}
+	
+	@Test
+	public void testGameCompletedAfterTwoInnings(){
+		
+		Team.resetPlayerNumbers();
+		
+		Team homeTeam = new Team("Essex CC");
+		Team visitors = new Team("Surrey CC");
+		
+		//Just one over to keep it simple
+		Game g = new Game(homeTeam, visitors, 1);
+		
+		Innings inns = g.startGame(visitors);
+		
+		for(int i = 0; i < 6; i++){
+			inns.addDelivery(new DotBall());
+		}
+		
+		inns = g.startNextInnings();
+		
+		for(int i = 0; i < 6; i++){
+			inns.addDelivery(new DotBall());
+		}
+		
+		assertEquals(true, g.isCompleted());
+		
+	}
+	
+	@Test
+	public void testGameNotCompleteAfterOneInnings(){
+		
+		Team.resetPlayerNumbers();
+		
+		Team homeTeam = new Team("Essex CC");
+		Team visitors = new Team("Surrey CC");
+		
+		//Just one over to keep it simple
+		Game g = new Game(homeTeam, visitors, 1);
+		
+		Innings inns = g.startGame(visitors);
+		
+		for(int i = 0; i < 6; i++){
+			inns.addDelivery(new DotBall());
+		}
+		
+		inns = g.startNextInnings();
+		
+		for(int i = 0; i < 5; i++){
+			inns.addDelivery(new DotBall());
+		}
+		
+		assertEquals(false, g.isCompleted());
+		
 	}
 
 }

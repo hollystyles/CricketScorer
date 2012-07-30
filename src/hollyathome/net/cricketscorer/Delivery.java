@@ -1,6 +1,8 @@
 package hollyathome.net.cricketscorer;
 
-public abstract class Delivery {
+import java.io.Serializable;
+
+public abstract class Delivery implements Serializable {
 	protected int runs;
 	protected int ran;
 	protected int conceded;
@@ -9,7 +11,6 @@ public abstract class Delivery {
 	protected boolean boundary;
 	protected Wicket wicket;
 	protected String type;
-	protected Player fielder;
 	protected Over over;
 	
 	public String getType(){
@@ -54,10 +55,6 @@ public abstract class Delivery {
 	
 	public void setOver(Over currentOver){
 		this.over = currentOver;
-	}
-	
-	public Player getFielder(){
-		return fielder;
 	}
 }
 

@@ -16,7 +16,7 @@ public class Wide extends Delivery {
 		this.type = "Wide";
 		this.complete = false;
 		this.extra = true;
-		this.ran = additionalRuns;
+		this.ran = 0;
 		this.conceded = this.runs = 1 + additionalRuns;
 	}
 }

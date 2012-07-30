@@ -1,8 +1,9 @@
 package hollyathome.net.cricketscorer;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Over {
+public class Over implements Serializable{
 	
 	private Player bowler;
 	private List<Delivery> deliveries;
@@ -61,5 +62,9 @@ public class Over {
 			}
 		}
 		return wickets;
+	}
+	
+	public Player getBowler(){
+		return bowler;
 	}
 }
